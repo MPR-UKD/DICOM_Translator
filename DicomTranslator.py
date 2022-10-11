@@ -17,7 +17,7 @@ from utilities.loading import list_all_files
 from utilities.saving import dir_make, move_dicom_file
 
 
-def run_translation(path, mode, cpus):
+def run_translation(path: str, mode: str, cpus: int) -> None:
     """
     main function of translation
     """

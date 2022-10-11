@@ -1,8 +1,9 @@
 import os
 import re
+from pydicom import Dataset
 
 
-def extract_series(ds):
+def extract_series(ds: Dataset) -> str:
     """
     Extra the series description from a pydicom dataset
 
@@ -19,7 +20,7 @@ def extract_series(ds):
     return str(SeriesDescription + '_' + SeriesInstanceUID)
 
 
-def rename_dicom_file(ds):
+def rename_dicom_file(ds: Dataset) -> str:
     """
     rename dicom file
 

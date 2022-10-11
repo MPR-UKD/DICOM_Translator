@@ -5,7 +5,7 @@ from pydicom.errors import InvalidDicomError
 from .utils_DICOM import rename_dicom_file
 
 
-def dir_make(dir_path):
+def dir_make(dir_path: str) -> None:
     """
     create directory if not exist
 
@@ -17,7 +17,7 @@ def dir_make(dir_path):
         pass
 
 
-def move_dicom_file(input_tuple):
+def move_dicom_file(input_tuple: tuple[str, str, str]) -> int:
     """
     move/ copy extracted dicom files to renamed file_name
 
