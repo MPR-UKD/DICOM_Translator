@@ -39,7 +39,8 @@ def run_translation(path: str, mode: str, cpus: int) -> None:
         shutil.move(target_path, path)
         dirs = glob.glob((path + os.sep + '*'))
         if len(dirs) == 1:
-            shutil.move(dirs[0], os.path.dirname(os.path.dirname(path)) + os.sep + os.path.basename(path))
+            shutil.move(dirs[0], os.path.dirname(path)+ os.sep + os.path.basename(dirs[0]))
+        shutil.rmtree(path)
 
     t3 = time.time()
     ctypes.windll.user32.MessageBoxW(0,
