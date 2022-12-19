@@ -7,9 +7,10 @@ from .utils_DICOM import rename_dicom_file
 
 def dir_make(dir_path: str) -> None:
     """
-    create directory if not exist
+    Create directory if it does not exist.
 
-    :param dir_path: string - path of directory
+    Args:
+        dir_path (str): path of directory
     """
     try:
         os.mkdir(dir_path)
@@ -17,14 +18,17 @@ def dir_make(dir_path: str) -> None:
         pass
 
 
-def move_dicom_file(input_tuple: tuple[str, str, str]) -> int:
+def move_dicom_file(input_tuple: (str, str, str)) -> int:
     """
-    move/ copy extracted dicom files to renamed file_name
+    Move or copy extracted DICOM files to renamed file_name.
 
-    :param input_tuple: (file, target_dir, mode = ["COPY", "MOVE"])
+    Args:
+        input_tuple (tuple): (file, target_dir, mode = ["COPY", "MOVE"])
 
-    :return: int - 1 = dicom_file, 2 = non dicom_file
+    Returns:
+        int: 1 if DICOM file, 0 if non-DICOM file
     """
+
     file, target_dir, mode = input_tuple
     try:
         ds = dcmread(file)
