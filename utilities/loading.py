@@ -1,15 +1,17 @@
 import os
 
 
-def list_all_files(path: str, target_dir: str = None, mode: str = None):
+def list_all_files(path: str, target_dir: str = None, mode: str = None) -> list[tuple]:
     """
-    Lists all files in a directory
+    Lists all files in a directory.
 
-    :param path: path of directory
-    :param target_dir: path of target directory - is added here to improve multiprocessing
-    :param mode: mode = [COPY or MOVE] - is added here to improve multiprocessing
+    Args:
+        path: path of directory
+        target_dir: path of target directory (optional)
+        mode: mode = [COPY or MOVE] (optional)
 
-    :return: list - with all files
+    Returns:
+        list: list of all files
     """
 
     path_to_files = []
