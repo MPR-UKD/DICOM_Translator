@@ -32,7 +32,7 @@ When the process is complete, a message is displayed indicating the duration and
 
 ## Usage (as .exe)
 
-1. Under the following Links ([one_dir_exe](https://uni-duesseldorf.sciebo.de/s/pPlCalVgMhaUmn4), [one_file_exe]()) you can download the DICOMTranslator as exe.
+1. Under the following Links ([one_dir_exe](/dist/DicomTranslator.exe), [one_file_exe](/dist/DICOMTranslator.zip)) you can download the DICOMTranslator as exe.
 2. If you use the one_dir_exe select the folder
 3. Click on the exe (DicomTranslator.exe), then the application starts
 4. Select whether the files should be copied or moved.
