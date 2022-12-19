@@ -1,16 +1,25 @@
 import ctypes
 import glob
+import os
 import shutil
 import sys
 import time
-import os
-from multiprocessing import Pool, freeze_support, cpu_count
+from multiprocessing import Pool, cpu_count, freeze_support
 
 import win32con
 import win32ui
-
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QCheckBox, QLabel, \
-    QSpinBox, QFileDialog
+from PyQt5.QtWidgets import (
+    QApplication,
+    QCheckBox,
+    QFileDialog,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QSpinBox,
+    QVBoxLayout,
+    QWidget,
+)
 from tqdm import tqdm
 
 from utilities.loading import list_all_files
@@ -21,7 +30,7 @@ def run_translation(path: str, mode: str, cpus: int) -> None:
     """
     main function of translation
     """
-    target_path = path + '_translated'
+    target_path = path + "_translated"
     dir_make(target_path)
     t1 = time.time()
     files = list_all_files(path, target_path, mode)
@@ -33,25 +42,37 @@ def run_translation(path: str, mode: str, cpus: int) -> None:
         results = [move_dicom_file(file) for file in files]
     else:
         with Pool(cpus) as p:
-            results = [_ for _ in tqdm(p.imap_unordered(move_dicom_file, files), total=len(files), file=sys.stdout)]
-    if mode == 'MOVE':
+            results = [
+                _
+                for _ in tqdm(
+                    p.imap_unordered(move_dicom_file, files),
+                    total=len(files),
+                    file=sys.stdout,
+                )
+            ]
+    if mode == "MOVE":
         shutil.rmtree(path)
         shutil.move(target_path, path)
-        dirs = glob.glob((path + os.sep + '*'))
+        dirs = glob.glob((path + os.sep + "*"))
         if len(dirs) == 1:
-            shutil.move(dirs[0], os.path.dirname(path)+ os.sep + os.path.basename(dirs[0]))
+            shutil.move(
+                dirs[0], os.path.dirname(path) + os.sep + os.path.basename(dirs[0])
+            )
         shutil.rmtree(path)
 
     t3 = time.time()
-    ctypes.windll.user32.MessageBoxW(0,
-                                     f"Translation completed \n"
-                                     f"---------------------------------------------------------\n"
-                                     f"Scan duration: {round((t2 - t1) * 100) / 100} s\n"
-                                     f"Number of detected files: {len(files)} \n"
-                                     f"     dicom files: {results.count(1)}\n"
-                                     f"     non dicom files: {results.count(0)}\n"
-                                     f"Duration to {mode.lower()} all dicom files: {round((t3 - t2) * 100) / 100} s",
-                                     "Completed", 1)
+    ctypes.windll.user32.MessageBoxW(
+        0,
+        f"Translation completed \n"
+        f"---------------------------------------------------------\n"
+        f"Scan duration: {round((t2 - t1) * 100) / 100} s\n"
+        f"Number of detected files: {len(files)} \n"
+        f"     dicom files: {results.count(1)}\n"
+        f"     non dicom files: {results.count(0)}\n"
+        f"Duration to {mode.lower()} all dicom files: {round((t3 - t2) * 100) / 100} s",
+        "Completed",
+        1,
+    )
 
 
 class FileDialogDemo(QWidget):
@@ -94,9 +115,11 @@ class FileDialogDemo(QWidget):
 
         # ROW 3
         author = QLabel()
-        author.setText("Author: Karl Ludger Radke (Version 0.1) \n"
-                       "last update: 11/10/2022 \n"
-                       "ludger.radke@med.uni-duesseldorf.de")
+        author.setText(
+            "Author: Karl Ludger Radke (Version 0.1) \n"
+            "last update: 11/10/2022 \n"
+            "ludger.radke@med.uni-duesseldorf.de"
+        )
         layout.addWidget(author)
         self.setLayout(layout)
         self.resize(1200, 100)
@@ -106,17 +129,21 @@ class FileDialogDemo(QWidget):
         path = self.path_textbox.text()
         cores = self.cores.value()
         if self.copy_button.isChecked():
-            mode = 'COPY'
+            mode = "COPY"
         else:
-            mode = 'MOVE'
+            mode = "MOVE"
         run_translation(path, mode, cores)
 
     def load_path(self):
         while True:
             path = QFileDialog.getExistingDirectory()
             if path == "":
-                response = win32ui.MessageBox("No directory was selected. \n"
-                                              "Would you like to close the application?", "Message", win32con.MB_YESNO)
+                response = win32ui.MessageBox(
+                    "No directory was selected. \n"
+                    "Would you like to close the application?",
+                    "Message",
+                    win32con.MB_YESNO,
+                )
                 if response == win32con.IDYES:
                     sys.exit(0)
                 elif response == win32con.IDNO:
@@ -125,7 +152,7 @@ class FileDialogDemo(QWidget):
             break
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     freeze_support()
     app = QApplication(sys.argv)
     ex = FileDialogDemo()

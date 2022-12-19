@@ -1,0 +1,34 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+    # Remove trailing whitespace from each line in text files
+    -   id: trailing-whitespace
+    # Remove trailing empty lines from text files
+    -   id: end-of-file-fixer
+    # Check all YAML files for valid syntax
+    -   id: check-yaml
+    # Make sure large files are not accidentally commited
+    -   id: check-added-large-files
+
+# Python auto-formatting
+-   repo: https://github.com/psf/black
+    rev: 22.8.0
+    hooks:
+    -   id: black
+
+# Sort Python includes
+-   repo: https://github.com/PyCQA/isort
+    rev: 5.10.1
+    hooks:
+    -   id: isort
+        args: ["--profile", "black"]
+
+# Automatically convert Windows CRLF line endings to Unix style LF endings
+-   repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.3.1
+    hooks:
+    -   id: remove-crlf

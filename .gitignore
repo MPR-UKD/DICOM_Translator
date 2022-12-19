@@ -1,6 +1,7 @@
 test_data
 build
 dist
+!dist/DicomTranslator.exe
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
