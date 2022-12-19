@@ -9,6 +9,7 @@ if os.path.exists(r"./dist"):
 os.system(
     "pyinstaller --collect-submodules=pydicom --icon=icon.ico DicomTranslator.py --onedir"
 )
+shutil.make_archive("./dist/DICOMTranslator", "zip", "./dist/DICOMTranslator")
 os.system(
     "pyinstaller --collect-submodules=pydicom --icon=icon.ico DicomTranslator.py --onefile"
 )
