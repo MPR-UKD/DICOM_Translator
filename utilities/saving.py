@@ -37,7 +37,7 @@ def move_dicom_file(input_tuple: (str, str, str)) -> int:
     except InvalidDicomError:
         return 0
     patient_name = (
-        str(ds.PatientName).replace("^^^", "").replace("^", "_")
+        str(ds.PatientName).replace("^^^", "").replace("^", "_").replace("\x1f", "")
         if "PatientName" in ds
         else "UnknownName"
     )
