@@ -102,7 +102,7 @@ class FileDialogDemo(QWidget):
         self.cores = QSpinBox()
         self.cores.setMaximum(cpu_count())
         self.cores.setMinimum(1)
-        self.cores.setValue(cpu_count())
+        self.cores.setValue(min(4, cpu_count()))
 
         run = QPushButton()
         run.setText("Start Translation")
@@ -116,8 +116,8 @@ class FileDialogDemo(QWidget):
         # ROW 3
         author = QLabel()
         author.setText(
-            "Author: Karl Ludger Radke (Version 0.1) \n"
-            "last update: 12/02/2023 \n"
+            "Author: Karl Ludger Radke (Version 0.2) \n"
+            "last update: 14/02/2023 \n"
             "ludger.radke@med.uni-duesseldorf.de"
         )
         layout.addWidget(author)
