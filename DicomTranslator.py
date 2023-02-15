@@ -72,7 +72,7 @@ def run_translation(
 
     t3 = time.time()
     if create_nii:
-        convert(root_folder=Path(target_path), mode=nii_mode)
+        convert(root_folder=Path(target_path), mode=nii_mode, n_processes=cpus)
         t4 = time.time()
         text = (
             f"Translation amd Nifti generation completed \n"
