@@ -5,12 +5,15 @@ import shutil
 import sys
 import time
 from multiprocessing import Pool, cpu_count, freeze_support
+from pathlib import Path
 
 import win32con
 import win32ui
+from go_nifti.src.GoNifti import convert
 from PyQt5.QtWidgets import (
     QApplication,
     QCheckBox,
+    QComboBox,
     QFileDialog,
     QHBoxLayout,
     QLabel,
@@ -26,7 +29,13 @@ from utilities.loading import list_all_files
 from utilities.saving import dir_make, move_dicom_file
 
 
-def run_translation(path: str, mode: str, cpus: int) -> None:
+def run_translation(
+    path: str,
+    mode: str,
+    cpus: int,
+    create_nii: bool = False,
+    nii_mode: str = "save_in_separate_dir",
+) -> None:
     """
     main function of translation
     """
@@ -59,17 +68,35 @@ def run_translation(path: str, mode: str, cpus: int) -> None:
                 dirs[0], os.path.dirname(path) + os.sep + os.path.basename(dirs[0])
             )
         shutil.rmtree(path)
+        target_path = path
 
     t3 = time.time()
+    if create_nii:
+        convert(root_folder=Path(target_path), mode=nii_mode)
+        t4 = time.time()
+        text = (
+            f"Translation amd Nifti generation completed \n"
+            f"---------------------------------------------------------\n"
+            f"Scan duration: {round((t2 - t1) * 100) / 100} s\n"
+            f"Number of detected files: {len(files)} \n"
+            f"     dicom files: {results.count(1)}\n"
+            f"     non dicom files: {results.count(0)}\n"
+            f"Duration to {mode.lower()} all dicom files: {round((t3 - t2) * 100) / 100} s \n"
+            f"Duration to generate and save nifti files: {round((t4 - t3) * 100) / 100} s "
+        )
+    else:
+        text = (
+            f"Translation completed \n"
+            f"---------------------------------------------------------\n"
+            f"Scan duration: {round((t2 - t1) * 100) / 100} s\n"
+            f"Number of detected files: {len(files)} \n"
+            f"     dicom files: {results.count(1)}\n"
+            f"     non dicom files: {results.count(0)}\n"
+            f"Duration to {mode.lower()} all dicom files: {round((t3 - t2) * 100) / 100} s"
+        )
     ctypes.windll.user32.MessageBoxW(
         0,
-        f"Translation completed \n"
-        f"---------------------------------------------------------\n"
-        f"Scan duration: {round((t2 - t1) * 100) / 100} s\n"
-        f"Number of detected files: {len(files)} \n"
-        f"     dicom files: {results.count(1)}\n"
-        f"     non dicom files: {results.count(0)}\n"
-        f"Duration to {mode.lower()} all dicom files: {round((t3 - t2) * 100) / 100} s",
+        text,
         "Completed",
         1,
     )
@@ -97,8 +124,22 @@ class FileDialogDemo(QWidget):
         self.copy_button.setText("COPY mode")
         self.copy_button.setChecked(True)
 
+        self.nii_button = QCheckBox()
+        self.nii_button.setText("Create Nifti")
+        self.nii_button.setChecked(False)
+
+        self.mode_combo = QComboBox()
+        self.mode_combo.setVisible(False)
+        self.mode_combo.addItems(
+            ["save_in_separate_dir", "save_in_folder", "save_in_exam_date"]
+        )
+
+        def change_combo(bool):
+            self.mode_combo.setVisible(bool)
+
+        self.nii_button.clicked.connect(change_combo)
         text = QLabel()
-        text.setText("\t \t \t Number of CPU cores being used:")
+        text.setText("\t Number of CPU cores being used:")
         self.cores = QSpinBox()
         self.cores.setMaximum(cpu_count())
         self.cores.setMinimum(1)
@@ -108,6 +149,8 @@ class FileDialogDemo(QWidget):
         run.setText("Start Translation")
         run.clicked.connect(self.run)
         layout2.addWidget(self.copy_button)
+        layout2.addWidget(self.nii_button)
+        layout2.addWidget(self.mode_combo)
         layout2.addWidget(text)
         layout2.addWidget(self.cores)
         layout2.addWidget(run)
@@ -132,7 +175,13 @@ class FileDialogDemo(QWidget):
             mode = "COPY"
         else:
             mode = "MOVE"
-        run_translation(path, mode, cores)
+        run_translation(
+            path,
+            mode,
+            cores,
+            self.nii_button.isChecked(),
+            self.mode_combo.currentText(),
+        )
 
     def load_path(self):
         while True:
