@@ -35,7 +35,7 @@ def run_translation(
     cpus: int,
     create_nii: bool = False,
     nii_mode: str = "save_in_separate_dir",
-    nii_change: str = "Unchanged"
+    nii_change: str = "Unchanged",
 ) -> None:
     """
     main function of translation
@@ -74,7 +74,12 @@ def run_translation(
     t3 = time.time()
     if create_nii:
         nii_change = None if nii_change == "Unchanged" else nii_change
-        convert(root_folder=Path(target_path), mode=nii_mode, out_dtype=nii_change, n_processes=cpus)
+        convert(
+            root_folder=Path(target_path),
+            mode=nii_mode,
+            out_dtype=nii_change,
+            n_processes=cpus,
+        )
         t4 = time.time()
         text = (
             f"Translation amd Nifti generation completed \n"
@@ -142,9 +147,7 @@ class FileDialogDemo(QWidget):
 
         self.mode_change_combo = QComboBox()
         self.mode_change_combo.setVisible(False)
-        self.mode_change_combo.addItems(
-            ["Unchanged", "int32", "float32", "float64"]
-        )
+        self.mode_change_combo.addItems(["Unchanged", "int32", "float32", "float64"])
 
         self.nii_button.clicked.connect(change_combo)
         text = QLabel()
@@ -191,7 +194,7 @@ class FileDialogDemo(QWidget):
             cores,
             self.nii_button.isChecked(),
             self.mode_combo.currentText(),
-            self.mode_change_combo.currentText()
+            self.mode_change_combo.currentText(),
         )
 
     def load_path(self):
