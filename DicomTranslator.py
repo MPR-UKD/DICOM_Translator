@@ -10,7 +10,7 @@ from pathlib import Path
 import win32con
 import win32ui
 from go_nifti.src.GoNifti import convert
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication,
     QCheckBox,
     QComboBox,
@@ -218,6 +218,7 @@ class FileDialogDemo(QWidget):
 if __name__ == "__main__":
     freeze_support()
     app = QApplication(sys.argv)
+    app.setStyle("Fusion")
     ex = FileDialogDemo()
     ex.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
