@@ -1,7 +1,7 @@
 # DICOM Translator
 This Python script is used to move or copy DICOM files from one directory to another, saving each file in a new directory with the patient, exam date and sequence name and Dicom image number.
 
-![plot](images/GUI.png)
+![plot](assets/show.gif)
 
 **For example**, a file named **"IM-0001-0001.dcm"** could be renamed **"John_Doe/20221008_1019/CT_Scan/CT_San_dym_00001.dcm"** if the patient's name is "John Doe", the exam date is 10/08/2022 at 10:19 AM, and the sequence name is "CT_scan".
 
@@ -33,6 +33,8 @@ When the process is complete, a message is displayed indicating the duration and
 ## Usage (as .exe)
 
 1. Under the following Links ([one_dir_exe](/dist/DICOMTranslator.zip ), [one_file_exe](/dist/DicomTranslator.exe)) you can download the DICOMTranslator as exe.
+Note: The application can also be installed in the traditional way, by running the [InstallerSetup](/Output/DicomTranslatorSetup.exe) in Output and adding **DicomTranslator** to your programs. If you want to uninstall it, you can do this directly as with other programs. 
+
 2. If you use the one_dir_exe select the folder
 3. Click on the exe (DicomTranslator.exe), then the application starts
 4. Select whether the files should be copied or moved.

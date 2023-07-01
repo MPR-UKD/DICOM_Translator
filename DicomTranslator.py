@@ -3,6 +3,8 @@ import glob
 import os
 import shutil
 import sys
+import tempfile
+import threading
 import time
 from multiprocessing import Pool, cpu_count, freeze_support
 from pathlib import Path
@@ -10,7 +12,8 @@ from pathlib import Path
 import win32con
 import win32ui
 from go_nifti.src.GoNifti import convert
-from PyQt5.QtWidgets import (
+from PyQt6.QtCore import QSettings
+from PyQt6.QtWidgets import (
     QApplication,
     QCheckBox,
     QComboBox,
@@ -22,10 +25,11 @@ from PyQt5.QtWidgets import (
     QSpinBox,
     QVBoxLayout,
     QWidget,
+    QProgressBar,
 )
 from tqdm import tqdm
 
-from utilities.loading import list_all_files
+from utilities.loading import list_all_files, read_last_line
 from utilities.saving import dir_make, move_dicom_file
 
 
@@ -36,6 +40,7 @@ def run_translation(
     create_nii: bool = False,
     nii_mode: str = "save_in_separate_dir",
     nii_change: str = "Unchanged",
+    update_progress=None,
 ) -> None:
     """
     main function of translation
@@ -44,22 +49,45 @@ def run_translation(
     dir_make(target_path)
     t1 = time.time()
     files = list_all_files(path, target_path, mode)
-    print(f"{len(files)} files found")
+    #print(f"{len(files)} files found")
     t2 = time.time()
-    print(f"Start: {mode} files to {target_path}")
+    #print(f"Start: {mode} files to {target_path}")
     DEBUG = False
     if DEBUG:
-        results = [move_dicom_file(file) for file in files]
+        results = []
+        for i, file in enumerate(files):
+            move_dicom_file(file)
+            progress = int((i + 1) / len(files) * 100)
+            if update_progress:
+                update_progress(progress)
     else:
-        with Pool(cpus) as p:
-            results = [
-                _
-                for _ in tqdm(
-                    p.imap_unordered(move_dicom_file, files),
-                    total=len(files),
-                    file=sys.stdout,
-                )
-            ]
+        output_path = Path(tempfile.gettempdir()) / "dicom_translator.txt"
+        with open(output_path, "w") as file:
+            pass
+
+        def check_progress():
+            while True:
+                last_line = read_last_line(output_path)
+                if "%" in last_line:
+                    progress = int(last_line.split("%")[0].split("\r")[-1])
+                    update_progress(progress)
+                    if progress == 100:
+                        break
+                time.sleep(0.1)
+
+        progress_checker = threading.Thread(target=check_progress, daemon=True)
+        progress_checker.start()
+
+        with open(output_path, "w+") as file:
+            with Pool(cpus) as p:
+                results = [
+                    _
+                    for _ in tqdm(
+                        p.imap_unordered(move_dicom_file, files),
+                        total=len(files),
+                        file=file,
+                    )
+                ]
     if mode == "MOVE":
         shutil.rmtree(path)
         shutil.move(target_path, path)
@@ -114,6 +142,7 @@ class FileDialogDemo(QWidget):
         super(FileDialogDemo, self).__init__(parent)
         layout = QVBoxLayout()
         self.setWindowTitle("Dicom Translator")
+        self.settings = QSettings("DicomTranslator", "DicomTranslator")
 
         # ROW 1
         layout1 = QHBoxLayout()
@@ -172,14 +201,39 @@ class FileDialogDemo(QWidget):
         # ROW 3
         author = QLabel()
         author.setText(
-            "Author: Karl Ludger Radke (Version 0.2) \n"
-            "last update: 14/02/2023 \n"
+            "Author: Karl Ludger Radke (Version 1.0) \n"
+            "last update: 01/07/2023 \n"
             "ludger.radke@med.uni-duesseldorf.de"
         )
         layout.addWidget(author)
+
+        # Create a QProgressBar instance
+        self.progress_bar = QProgressBar(self)
+        self.progress_bar.setStyleSheet("""
+            QProgressBar {
+                border: 2px solid grey;
+                border-radius: 5px;
+                text-align: center;
+                color: white;
+            }
+            QProgressBar::chunk {
+                background-color: green;
+            }
+        """)
+        # Set its maximum value
+        self.progress_bar.setMaximum(100)
+        # Hide it initially
+        self.progress_bar.setVisible(False)
+        # Add the progress bar to the layout
+        layout.addWidget(self.progress_bar)
+
         self.setLayout(layout)
         self.resize(1200, 100)
         self.show()
+
+    def update_progress(self, value):
+        self.progress_bar.setValue(value)
+        QApplication.processEvents()
 
     def run(self):
         path = self.path_textbox.text()
@@ -188,6 +242,7 @@ class FileDialogDemo(QWidget):
             mode = "COPY"
         else:
             mode = "MOVE"
+        self.progress_bar.setVisible(True)
         run_translation(
             path,
             mode,
@@ -195,11 +250,13 @@ class FileDialogDemo(QWidget):
             self.nii_button.isChecked(),
             self.mode_combo.currentText(),
             self.mode_change_combo.currentText(),
+            self.update_progress,
         )
 
     def load_path(self):
+        self.progress_bar.setVisible(False)
         while True:
-            path = QFileDialog.getExistingDirectory()
+            path = QFileDialog.getExistingDirectory(self, "Select Directory", self.settings.value("lastPath", ""))
             if path == "":
                 response = win32ui.MessageBox(
                     "No directory was selected. \n"
@@ -211,6 +268,7 @@ class FileDialogDemo(QWidget):
                     sys.exit(0)
                 elif response == win32con.IDNO:
                     continue
+            self.settings.setValue("lastPath", Path(path).parent.as_posix())
             self.path_textbox.setText(path)
             break
 
@@ -218,6 +276,7 @@ class FileDialogDemo(QWidget):
 if __name__ == "__main__":
     freeze_support()
     app = QApplication(sys.argv)
+    app.setStyle("Fusion")
     ex = FileDialogDemo()
     ex.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
