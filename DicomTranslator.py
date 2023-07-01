@@ -24,7 +24,7 @@ from PyQt6.QtWidgets import (
     QSpinBox,
     QVBoxLayout,
     QWidget,
-QProgressBar
+    QProgressBar,
 )
 from tqdm import tqdm
 
@@ -63,15 +63,17 @@ def run_translation(
         output_path = Path(tempfile.gettempdir()) / "dicom_translator.txt"
         with open(output_path, "w") as file:
             pass
+
         def check_progress():
             while True:
-                    last_line = read_last_line(output_path)
-                    if "%" in last_line:
-                        progress = int(last_line.split("%")[0].split('\r')[-1])
-                        update_progress(progress)
-                        if progress == 100:
-                            break
-                    time.sleep(0.1)
+                last_line = read_last_line(output_path)
+                if "%" in last_line:
+                    progress = int(last_line.split("%")[0].split("\r")[-1])
+                    update_progress(progress)
+                    if progress == 100:
+                        break
+                time.sleep(0.1)
+
         progress_checker = threading.Thread(target=check_progress, daemon=True)
         progress_checker.start()
 
@@ -84,7 +86,7 @@ def run_translation(
                         total=len(files),
                         file=file,
                     )
-            ]
+                ]
     if mode == "MOVE":
         shutil.rmtree(path)
         shutil.move(target_path, path)
@@ -235,7 +237,7 @@ class FileDialogDemo(QWidget):
             self.nii_button.isChecked(),
             self.mode_combo.currentText(),
             self.mode_change_combo.currentText(),
-            self.update_progress
+            self.update_progress,
         )
 
     def load_path(self):
