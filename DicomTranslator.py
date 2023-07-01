@@ -12,6 +12,7 @@ from pathlib import Path
 import win32con
 import win32ui
 from go_nifti.src.GoNifti import convert
+from PyQt6.QtCore import QSettings
 from PyQt6.QtWidgets import (
     QApplication,
     QCheckBox,
@@ -48,9 +49,9 @@ def run_translation(
     dir_make(target_path)
     t1 = time.time()
     files = list_all_files(path, target_path, mode)
-    print(f"{len(files)} files found")
+    #print(f"{len(files)} files found")
     t2 = time.time()
-    print(f"Start: {mode} files to {target_path}")
+    #print(f"Start: {mode} files to {target_path}")
     DEBUG = False
     if DEBUG:
         results = []
@@ -141,6 +142,7 @@ class FileDialogDemo(QWidget):
         super(FileDialogDemo, self).__init__(parent)
         layout = QVBoxLayout()
         self.setWindowTitle("Dicom Translator")
+        self.settings = QSettings("DicomTranslator", "DicomTranslator")
 
         # ROW 1
         layout1 = QHBoxLayout()
@@ -199,14 +201,25 @@ class FileDialogDemo(QWidget):
         # ROW 3
         author = QLabel()
         author.setText(
-            "Author: Karl Ludger Radke (Version 0.2) \n"
-            "last update: 14/02/2023 \n"
+            "Author: Karl Ludger Radke (Version 1.0) \n"
+            "last update: 01/07/2023 \n"
             "ludger.radke@med.uni-duesseldorf.de"
         )
         layout.addWidget(author)
 
         # Create a QProgressBar instance
         self.progress_bar = QProgressBar(self)
+        self.progress_bar.setStyleSheet("""
+            QProgressBar {
+                border: 2px solid grey;
+                border-radius: 5px;
+                text-align: center;
+                color: white;
+            }
+            QProgressBar::chunk {
+                background-color: green;
+            }
+        """)
         # Set its maximum value
         self.progress_bar.setMaximum(100)
         # Hide it initially
@@ -243,7 +256,7 @@ class FileDialogDemo(QWidget):
     def load_path(self):
         self.progress_bar.setVisible(False)
         while True:
-            path = QFileDialog.getExistingDirectory()
+            path = QFileDialog.getExistingDirectory(self, "Select Directory", self.settings.value("lastPath", ""))
             if path == "":
                 response = win32ui.MessageBox(
                     "No directory was selected. \n"
@@ -255,6 +268,7 @@ class FileDialogDemo(QWidget):
                     sys.exit(0)
                 elif response == win32con.IDNO:
                     continue
+            self.settings.setValue("lastPath", Path(path).parent.as_posix())
             self.path_textbox.setText(path)
             break
 
