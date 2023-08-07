@@ -3,7 +3,7 @@ click==8.1.3
 colorama==0.4.5
 dicom2nifti==2.4.8
 future==0.18.2
-GoNifti @ https://github.com/MPR-UKD/GoNifti/raw/main/dist/GoNifti-0.2-py3-none-any.whl
+GoNifti @ https://github.com/MPR-UKD/GoNifti/raw/main/dist/GoNifti-0.3-py3-none-any.whl
 nibabel==5.1.0
 numpy==1.25.0
 packaging==23.1

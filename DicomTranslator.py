@@ -7,6 +7,7 @@ import tempfile
 import threading
 import time
 from multiprocessing import Pool, cpu_count, freeze_support
+import multiprocessing
 from pathlib import Path
 
 import win32con
@@ -40,6 +41,7 @@ def run_translation(
     create_nii: bool = False,
     nii_mode: str = "save_in_separate_dir",
     nii_change: str = "Unchanged",
+    compress: bool = True,
     update_progress=None,
 ) -> None:
     """
@@ -49,9 +51,9 @@ def run_translation(
     dir_make(target_path)
     t1 = time.time()
     files = list_all_files(path, target_path, mode)
-    #print(f"{len(files)} files found")
+    # print(f"{len(files)} files found")
     t2 = time.time()
-    #print(f"Start: {mode} files to {target_path}")
+    # print(f"Start: {mode} files to {target_path}")
     DEBUG = False
     if DEBUG:
         results = []
@@ -107,6 +109,7 @@ def run_translation(
             mode=nii_mode,
             out_dtype=nii_change,
             n_processes=cpus,
+            compress=compress,
         )
         t4 = time.time()
         text = (
@@ -170,9 +173,14 @@ class FileDialogDemo(QWidget):
             ["save_in_separate_dir", "save_in_folder", "save_in_exam_date"]
         )
 
+        self.compress_combo = QComboBox()
+        self.compress_combo.setVisible(False)
+        self.compress_combo.addItems([".nii.gz", ".nii"])
+
         def change_combo(bool):
             self.mode_combo.setVisible(bool)
             self.mode_change_combo.setVisible(bool)
+            self.compress_combo.setVisible(bool)
 
         self.mode_change_combo = QComboBox()
         self.mode_change_combo.setVisible(False)
@@ -193,6 +201,7 @@ class FileDialogDemo(QWidget):
         layout2.addWidget(self.nii_button)
         layout2.addWidget(self.mode_combo)
         layout2.addWidget(self.mode_change_combo)
+        layout2.addWidget(self.compress_combo)
         layout2.addWidget(text)
         layout2.addWidget(self.cores)
         layout2.addWidget(run)
@@ -209,7 +218,8 @@ class FileDialogDemo(QWidget):
 
         # Create a QProgressBar instance
         self.progress_bar = QProgressBar(self)
-        self.progress_bar.setStyleSheet("""
+        self.progress_bar.setStyleSheet(
+            """
             QProgressBar {
                 border: 2px solid grey;
                 border-radius: 5px;
@@ -219,7 +229,8 @@ class FileDialogDemo(QWidget):
             QProgressBar::chunk {
                 background-color: green;
             }
-        """)
+        """
+        )
         # Set its maximum value
         self.progress_bar.setMaximum(100)
         # Hide it initially
@@ -250,13 +261,16 @@ class FileDialogDemo(QWidget):
             self.nii_button.isChecked(),
             self.mode_combo.currentText(),
             self.mode_change_combo.currentText(),
+            self.compress_combo.currentText() == ".nii.gz",
             self.update_progress,
         )
 
     def load_path(self):
         self.progress_bar.setVisible(False)
         while True:
-            path = QFileDialog.getExistingDirectory(self, "Select Directory", self.settings.value("lastPath", ""))
+            path = QFileDialog.getExistingDirectory(
+                self, "Select Directory", self.settings.value("lastPath", "")
+            )
             if path == "":
                 response = win32ui.MessageBox(
                     "No directory was selected. \n"
@@ -275,6 +289,7 @@ class FileDialogDemo(QWidget):
 
 if __name__ == "__main__":
     freeze_support()
+    multiprocessing.set_start_method("spawn")
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
     ex = FileDialogDemo()
