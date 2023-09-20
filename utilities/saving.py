@@ -44,7 +44,7 @@ def move_dicom_file(input_tuple: (str, str, str)) -> int:
     if patient_name == "UnknownName":
         return 0
 
-    patient_id = ds.PatientID if "PatientID" in ds else "NA"
+    patient_id = ds.PatientID.replace(':', '_') if "PatientID" in ds else "NA"
     new_file_name = rename_dicom_file(ds)
     date = ds.StudyDate if "StudyDate" in ds else "0000000"
     time_point = ds.StudyTime if "StudyTime" in ds else "0000000.0"
