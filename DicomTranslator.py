@@ -1,5 +1,6 @@
 import ctypes
 import glob
+import multiprocessing
 import os
 import shutil
 import sys
@@ -7,12 +8,8 @@ import tempfile
 import threading
 import time
 from multiprocessing import Pool, cpu_count, freeze_support
-import multiprocessing
 from pathlib import Path
 
-import win32con
-import win32ui
-from go_nifti.src.GoNifti import convert
 from PyQt6.QtCore import QSettings
 from PyQt6.QtWidgets import (
     QApplication,
@@ -28,6 +25,8 @@ from PyQt6.QtWidgets import (
     QWidget,
     QProgressBar,
 )
+from PyQt6.QtWidgets import QMessageBox
+from go_nifti.src.GoNifti import convert
 from tqdm import tqdm
 
 from utilities.loading import list_all_files, read_last_line
@@ -132,12 +131,12 @@ def run_translation(
             f"     non dicom files: {results.count(0)}\n"
             f"Duration to {mode.lower()} all dicom files: {round((t3 - t2) * 100) / 100} s"
         )
-    ctypes.windll.user32.MessageBoxW(
-        0,
-        text,
-        "Completed",
-        1,
-    )
+    msg_box = QMessageBox()
+    msg_box.setWindowTitle("Completed")
+    msg_box.setText(text)
+    msg_box.setIcon(QMessageBox.Icon.Information)
+    msg_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+    msg_box.exec()
 
 
 class FileDialogDemo(QWidget):
@@ -210,8 +209,8 @@ class FileDialogDemo(QWidget):
         # ROW 3
         author = QLabel()
         author.setText(
-            "Author: Karl Ludger Radke (Version 1.1.1) \n"
-            "last update: 20 Sep. 2023 \n"
+            "Author: Karl Ludger Radke (Version 1.2) \n"
+            "last update: 25 Okt. 2023 \n"
             "ludger.radke@med.uni-duesseldorf.de"
         )
         layout.addWidget(author)
@@ -272,16 +271,16 @@ class FileDialogDemo(QWidget):
                 self, "Select Directory", self.settings.value("lastPath", "")
             )
             if path == "":
-                response = win32ui.MessageBox(
-                    "No directory was selected. \n"
-                    "Would you like to close the application?",
+                response = QMessageBox.question(
+                    self,
                     "Message",
-                    win32con.MB_YESNO,
+                    "No directory was selected. \nWould you like to close the application?"
                 )
-                if response == win32con.IDYES:
+
+                if response == QMessageBox.StandardButton.Yes:
                     sys.exit(0)
-                elif response == win32con.IDNO:
-                    continue
+                elif response == QMessageBox.StandardButton.No:
+                    return None
             self.settings.setValue("lastPath", Path(path).parent.as_posix())
             self.path_textbox.setText(path)
             break
