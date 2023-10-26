@@ -7,10 +7,9 @@ This Python script is used to move or copy DICOM files from one directory to ano
 
 ## Required libraries and Python version
 - **Python:** 3.10+
-- PyQt5
+- PyQt6
 - tqdm
 - pydicom
-- win32ui
 - ctypes
 
 ```basch
@@ -30,18 +29,42 @@ python DICOMTranslator.py
 
 When the process is complete, a message is displayed indicating the duration and the number of files recognized.
 
-## Usage (as .exe)
+## Usage
 
-1. Under the following Links ([one_dir_exe](/dist/DICOMTranslator.zip ), [one_file_exe](/dist/DicomTranslator.exe)) you can download the DICOMTranslator as exe.
-Note: The application can also be installed in the traditional way, by running the [InstallerSetup](/Output/DicomTranslatorSetup.exe) in Output and adding **DicomTranslator** to your programs. If you want to uninstall it, you can do this directly as with other programs. 
+### Windows:
 
-2. If you use the one_dir_exe select the folder
-3. Click on the exe (DicomTranslator.exe), then the application starts
-4. Select whether the files should be copied or moved.
-5. Select the number of CPU cores to be used for the operation.
-6. Click Start Translation to start the operation.
+#### Executable (`.exe`):
 
-When the process is complete, a message is displayed indicating the duration and the number of files recognized.
+1. You can download the DICOMTranslator for Windows using the following links:
+   - [Standalone Executable](/dist/DicomTranslator.exe)
+   - [Directory Version](/dist/DICOMTranslator.zip)
+
+   **Note**: The application can also be installed in the traditional manner. Simply run the [InstallerSetup](/Output/DicomTranslatorSetup.exe) from the `Output` directory and it will add **DicomTranslator** to your list of programs. If you wish to uninstall it later, you can do so like any other software.
+
+2. If you're using the Directory Version (`one_dir_exe`), extract the contents of the zip file.
+3. Launch the application by double-clicking on `DicomTranslator.exe`.
+4. Choose if you want the files to be copied or moved.
+5. Specify the number of CPU cores to utilize for the operation.
+6. Click "Start Translation" to begin the process.
+
+### macOS:
+
+#### Executable (`.app`):
+
+1. For macOS users, download the DICOMTranslator from the following link:
+   - [Mac Version](/dist/DicomTranslator_mac.zip)
+
+2. Extract the `.zip` file to get the `.app` application.
+3. Open the application by double-clicking on `DicomTranslator.app`.
+4. Choose if you want the files to be copied or moved.
+5. Specify the number of CPU cores to utilize for the operation.
+6. Click "Start Translation" to begin the process.
+
+---
+
+For both Windows and macOS:
+
+Once the process concludes, a message will pop up indicating the duration taken and the number of files processed.
 
 ## Notes
 Non-DICOM files are not moved or copied.
