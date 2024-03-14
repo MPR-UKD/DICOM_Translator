@@ -209,8 +209,8 @@ class FileDialogDemo(QWidget):
         # ROW 3
         author = QLabel()
         author.setText(
-            "Author: Karl Ludger Radke (Version 1.2) \n"
-            "last update: 25 Okt. 2023 \n"
+            "Author: Karl Ludger Radke (Version 1.3) \n"
+            "last update: 14 March 2024 \n"
             "ludger.radke@med.uni-duesseldorf.de"
         )
         layout.addWidget(author)

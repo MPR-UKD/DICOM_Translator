@@ -1,8 +1,8 @@
 [Setup]
 AppId={{3F12B359-E222-4242-42B0-427B28D4242A}}
 AppName=DicomTranslator
-AppVersion=1.1
-;AppVerName=Dicom Translator 1.1
+AppVersion=1.3
+;AppVerName=Dicom Translator 1.3
 AppPublisher=Karl Ludger Radke
 DefaultDirName={pf}\DicomTranslator
 DefaultGroupName=DicomTranslator
