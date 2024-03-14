@@ -117,7 +117,6 @@ jobs:
       - name: Create Installer
         run: |
           ISCC.exe /DMyAppVersion=${{ steps.get_tag.outputs.TAG }} /F"DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}" .\installer\DicomTranslator.iss
-        working-directory: ${GITHUB_WORKSPACE}
 
       - name: Upload Installer to Artifact
         uses: actions/upload-artifact@v3
