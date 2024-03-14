@@ -113,6 +113,22 @@ jobs:
           name: DicomTranslator-windows-${{  steps.get_tag.outputs.TAG }}
           path: ./dist/DicomTranslator-windows-${{  steps.get_tag.outputs.TAG }}.exe
 
+      # Inno Setup
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup
+
+      - name: Create Installer
+        run: |
+          ISCC.exe /DMyAppVersion=${{ steps.get_tag.outputs.TAG }} /F"DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}" .\installer\DicomTranslator.iss
+        working-directory: .\dist
+
+      - name: Upload Installer to Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: DicomTranslatorSetup-windows-${{ steps.get_tag.outputs.TAG }}
+          path: ./dist/DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}.exe
+
   build-macos:
     name: Build for macOS
     runs-on: macos-latest
@@ -188,6 +204,16 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path:  ./DicomTranslator-windows-${{ steps.get_tag.outputs.TAG }}/DicomTranslator-windows-${{ steps.get_tag.outputs.TAG }}.exe
           asset_name: DicomTranslator-windows-${{ steps.get_tag.outputs.TAG }}.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload Windows Setup Executable to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path:  ./DicomTranslatorSetup-windows-${{ steps.get_tag.outputs.TAG }}/DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}.exe
+          asset_name: DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}.exe
           asset_content_type: application/octet-stream
 
       - name: Upload macOS Executable to Release
