@@ -43,6 +43,10 @@ jobs:
           name: DicomTranslator-windows-${{  steps.get_tag.outputs.TAG }}
           path: ./dist/DicomTranslator-windows-${{  steps.get_tag.outputs.TAG }}.exe
 
+      - name: Build with PyInstaller (ondir)
+        run: pyinstaller --onedir --windowed --collect-submodules=pydicom --icon=assets/icon.ico --add-data="assets/icon.ico;." --noconsole DicomTranslator.py --noconfirm
+
+
       # Inno Setup
       - name: Create Installer
         run: |
