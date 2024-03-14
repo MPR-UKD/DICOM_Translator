@@ -6,6 +6,75 @@ on:
       - 'v*'
 
 jobs:
+
+  build-linux:
+    name: Build for Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get the version tag
+        id: get_tag
+        run: echo "::set-output name=TAG::${GITHUB_REF#refs/tags/}"
+        shell: bash
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+           python -m pip install -r ./requirements.txt
+      - name: Build with PyInstaller
+        run: pyinstaller --onefile --windowed --collect-submodules=pydicom  --noconsole --noconfirm DicomTranslator.py
+
+      - name: Extract version
+        id: get_version
+        run: echo "::set-output name=VERSION::$(python setup.py --version)"
+        shell: bash
+
+      - name: Rename file
+        run: mv ./dist/DicomTranslator ./dist/DicomTranslator-linux-${{  steps.get_tag.outputs.TAG }}
+
+      - name: Upload Executable to Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: DicomTranslator-linux-${{  steps.get_tag.outputs.TAG }}
+          path: ./dist/DicomTranslator-linux-${{  steps.get_tag.outputs.TAG }}
+
+  build-macos-arm:
+    name: Build for macOS ARM
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get the version tag
+        id: get_tag
+        run: echo "::set-output name=TAG::${GITHUB_REF#refs/tags/}"
+        shell: bash
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+           python -m pip install --upgrade pip
+           pip install -r ./requirements.txt
+      - name: Build with PyInstaller for ARM
+        run: pyinstaller --onefile --windowed --collect-submodules=pydicom --icon=assets/icon.icns --add-data="assets/icon.icns:." --noconsole DicomTranslator.py --noconfirm
+
+      - name: Rename file for ARM
+        run: mv ./dist/DicomTranslator ./dist/DicomTranslator-macos-arm-${{ steps.get_tag.outputs.TAG }}
+
+      - name: Upload ARM Executable to Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: DicomTranslator-macos-arm-${{ steps.get_tag.outputs.TAG }}
+          path: ./dist/DicomTranslator-macos-arm-${{ steps.get_tag.outputs.TAG }}
+
   build-windows:
     name: Build for Windows
     runs-on: windows-latest
@@ -56,4 +125,119 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: DicomTranslatorSetup-windows-${{ steps.get_tag.outputs.TAG }}
-          path: ./dist/DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}.exe
+          path: ./Output/DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}.exe
+
+  build-macos:
+    name: Build for macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get the version tag
+        id: get_tag
+        run: echo "::set-output name=TAG::${GITHUB_REF#refs/tags/}"
+        shell: bash
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+           python -m pip install -r ./requirements.txt
+      - name: Build with PyInstaller
+        run: pyinstaller --onefile --windowed --collect-submodules=pydicom --icon=assets/icon.icns --add-data="assets/icon.icns:." --noconsole DicomTranslator.py --noconfirm
+
+      - name: Extract version
+        id: get_version
+        run: echo "::set-output name=VERSION::$(python setup.py --version)"
+        shell: bash
+
+      - name: Rename file
+        run: mv ./dist/DicomTranslator ./dist/DicomTranslator-macos-${{  steps.get_tag.outputs.TAG }}
+
+      - name: Upload Executable to Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: DicomTranslator-macos-${{  steps.get_tag.outputs.TAG }}
+          path: ./dist/DicomTranslator-macos-${{  steps.get_tag.outputs.TAG }}
+
+  create-release:
+    name: Create Release and Upload Assets
+    needs: [build-windows, build-macos, build-linux, build-macos-arm]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+
+      - name: List downloaded files
+        run: |
+          echo "Listing files in the current directory:"
+          pwd
+          ls -Rlah
+      - name: Get the version tag for release
+        id: get_tag
+        run: echo "::set-output name=TAG::${GITHUB_REF#refs/tags/}"
+        shell: bash
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Windows Executable to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path:  ./DicomTranslator-windows-${{ steps.get_tag.outputs.TAG }}/DicomTranslator-windows-${{ steps.get_tag.outputs.TAG }}.exe
+          asset_name: DicomTranslator-windows-${{ steps.get_tag.outputs.TAG }}.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload Windows Setup Executable to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path:  ./DicomTranslatorSetup-windows-${{ steps.get_tag.outputs.TAG }}/DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}.exe
+          asset_name: DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload macOS Executable to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./DicomTranslator-macos-${{ steps.get_tag.outputs.TAG }}/DicomTranslator-macos-${{ steps.get_tag.outputs.TAG }}
+          asset_name: DicomTranslator-macos-${{ steps.get_tag.outputs.TAG }}
+          asset_content_type: application/octet-stream
+
+      - name: Upload macOS-Arm Executable to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./DicomTranslator-macos-arm-${{ steps.get_tag.outputs.TAG }}/DicomTranslator-macos-arm-${{ steps.get_tag.outputs.TAG }}
+          asset_name: DicomTranslator-macos-arm-${{ steps.get_tag.outputs.TAG }}
+          asset_content_type: application/octet-stream
+
+      - name: Upload Linux Executable to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./DicomTranslator-linux-${{ steps.get_tag.outputs.TAG }}/DicomTranslator-linux-${{ steps.get_tag.outputs.TAG }}
+          asset_name: DicomTranslator-linux-${{ steps.get_tag.outputs.TAG }}
+          asset_content_type: application/octet-stream
