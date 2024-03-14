@@ -70,6 +70,15 @@ pip install pre-commit
 pre-commit install
 ```
 
+## Create Release
+
+```shell
+git tag -a v0.0.1-beta -m "Release v0.0.1-beta"
+```
+```shell
+git push origin v0.0.1-beta
+```
+
 ## Support
 
 If you find the DICOM Translator helpful, consider starring the repository on GitHub. This helps increase its visibility and reach more users interested in DICOM file management.
