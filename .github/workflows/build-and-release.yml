@@ -114,14 +114,10 @@ jobs:
           path: ./dist/DicomTranslator-windows-${{  steps.get_tag.outputs.TAG }}.exe
 
       # Inno Setup
-      - name: Install Inno Setup
-        run: |
-          choco install innosetup
-
       - name: Create Installer
         run: |
           ISCC.exe /DMyAppVersion=${{ steps.get_tag.outputs.TAG }} /F"DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}" .\installer\DicomTranslator.iss
-        working-directory: .\dist
+        working-directory: ${GITHUB_WORKSPACE}
 
       - name: Upload Installer to Artifact
         uses: actions/upload-artifact@v3
