@@ -46,7 +46,7 @@ jobs:
       # Inno Setup
       - name: Create Installer
         run: |
-          ISCC.exe /DMyAppVersion=${{ steps.get_tag.outputs.TAG }} /F"DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}" .\installer\DicomTranslator.iss
+          ISCC.exe /DMyAppVersion=${{ steps.get_tag.outputs.TAG }} /F"DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}" .\DicomTranslator.iss
 
       - name: Upload Installer to Artifact
         uses: actions/upload-artifact@v3
