@@ -42,16 +42,16 @@ The DICOM Translator is available as a standalone executable for Windows, macOS,
 
 #### Windows
 
-- **Standalone Executable**: Download from the [latest GitHub release](https://github.com/yourusername/yourrepository/releases/latest).
-- **Installer**: Additionally, a Windows installer is available for a more traditional setup. It can be found in the same [releases section](https://github.com/yourusername/yourrepository/releases/latest).
+- **Standalone Executable**: Download from the [latest GitHub release](https://github.com/MPR-UKD/DICOM_Translator/releases/latest).
+- **Installer**: Additionally, a Windows installer is available for a more traditional setup. It can be found in the same [releases section](https://github.com/MPR-UKD/DICOM_Translator/releases/latest).
 
 #### macOS
 
-- **.app Executable**: macOS users can download a `.zip` file containing the `.app` from the [latest GitHub release](https://github.com/yourusername/yourrepository/releases/latest). Extract the `.zip` file and open the application by double-clicking on `DicomTranslator.app`.
+- **.app Executable**: macOS users can download a `.zip` file containing the `.app` from the [latest GitHub release](https://github.com/MPR-UKD/DICOM_Translator/releases/latest). Extract the `.zip` file and open the application by double-clicking on `DicomTranslator.app`.
 
 #### Linux
 
-- **Executable**: Linux users can download the executable directly from the [latest GitHub release](https://github.com/yourusername/yourrepository/releases/latest).
+- **Executable**: Linux users can download the executable directly from the [latest GitHub release](https://github.com/MPR-UKD/DICOM_Translator/releases/latest).
 
 ## License
 
