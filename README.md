@@ -1,91 +1,75 @@
 # DICOM Translator
-This Python script is used to move or copy DICOM files from one directory to another, saving each file in a new directory with the patient, exam date and sequence name and Dicom image number.
 
-![plot](assets/show.gif)
+DICOM Translator is a Python-based tool designed to efficiently move or copy DICOM files from one directory to another. It organizes each file into a new directory structure based on the patient's name, exam date, sequence name, and DICOM image number. This utility simplifies the management of DICOM files, making it an invaluable tool for healthcare professionals and researchers dealing with medical imaging data.
 
-**For example**, a file named **"IM-0001-0001.dcm"** could be renamed **"John_Doe/20221008_1019/CT_Scan/CT_San_dym_00001.dcm"** if the patient's name is "John Doe", the exam date is 10/08/2022 at 10:19 AM, and the sequence name is "CT_scan".
+![DICOM Translator in action](assets/show.gif)
 
-## Required libraries and Python version
-- **Python:** 3.10+
+**Example**: A file named `IM-0001-0001.dcm` could be renamed to `John_Doe/20221008_1019/CT_Scan/CT_Scan_dym_00001.dcm` if the patient's name is "John Doe", the exam date is October 8, 2022, at 10:19 AM, and the sequence name is "CT_Scan".
+
+## Requirements
+
+- **Python:** Version 3.10 or newer
 - PyQt6
 - tqdm
 - pydicom
 - ctypes
 
-```basch
+To install the required libraries:
+
+```bash
 pip install -r requirements.txt
 ```
 
-## Usage (with Python)
-1. Start the script and select the path where the DICOM files are located.
-
-```basch
-python DICOMTranslator.py
-```
-
-2. Select whether the files should be copied or moved.
-3. Select the number of CPU cores to be used for the operation.
-4. Click Start Translation to start the operation.
-
-When the process is complete, a message is displayed indicating the duration and the number of files recognized.
-
 ## Usage
 
-### Windows:
+### Running with Python
 
-#### Executable (`.exe`):
+1. Start the script and select the directory where the DICOM files are located.
 
-1. You can download the DICOMTranslator for Windows using the following links:
-   - [Standalone Executable](/dist/DicomTranslator.exe)
-   - [Directory Version](/dist/DICOMTranslator.zip)
+    ```bash
+    python DICOMTranslator.py
+    ```
 
-   **Note**: The application can also be installed in the traditional manner. Simply run the [InstallerSetup](/Output/DicomTranslatorSetup.exe) from the `Output` directory and it will add **DicomTranslator** to your list of programs. If you wish to uninstall it later, you can do so like any other software.
+2. Choose whether the files should be copied or moved.
+3. Select the number of CPU cores to be used.
+4. Click "Start Translation" to initiate the process.
 
-2. If you're using the Directory Version (`one_dir_exe`), extract the contents of the zip file.
-3. Launch the application by double-clicking on `DicomTranslator.exe`.
-4. Choose if you want the files to be copied or moved.
-5. Specify the number of CPU cores to utilize for the operation.
-6. Click "Start Translation" to begin the process.
+Upon completion, a message will display the operation's duration and the number of files processed.
 
-### macOS:
+### Executables
 
-#### Executable (`.app`):
+The DICOM Translator is available as a standalone executable for Windows, macOS, and Linux, eliminating the need for a Python environment setup.
 
-1. For macOS users, download the DICOMTranslator from the following link:
-   - [Mac Version](/dist/DicomTranslator_mac.zip)
+#### Windows
 
-2. Extract the `.zip` file to get the `.app` application.
-3. Open the application by double-clicking on `DicomTranslator.app`.
-4. Choose if you want the files to be copied or moved.
-5. Specify the number of CPU cores to utilize for the operation.
-6. Click "Start Translation" to begin the process.
+- **Standalone Executable**: Download from the [latest GitHub release](https://github.com/yourusername/yourrepository/releases/latest).
+- **Installer**: Additionally, a Windows installer is available for a more traditional setup. It can be found in the same [releases section](https://github.com/yourusername/yourrepository/releases/latest).
 
----
+#### macOS
 
-For both Windows and macOS:
+- **.app Executable**: macOS users can download a `.zip` file containing the `.app` from the [latest GitHub release](https://github.com/yourusername/yourrepository/releases/latest). Extract the `.zip` file and open the application by double-clicking on `DicomTranslator.app`.
 
-Once the process concludes, a message will pop up indicating the duration taken and the number of files processed.
+#### Linux
 
-## Notes
-Non-DICOM files are not moved or copied.
-When working in "MOVE" mode, the original directory is deleted after the operation is completed.
-When working in "COPY" mode, the original directory is retained.
+- **Executable**: Linux users can download the executable directly from the [latest GitHub release](https://github.com/yourusername/yourrepository/releases/latest).
 
 ## License
-[GNU General Public License 3](https://www.gnu.org/licenses/gpl-3.0.html)
 
-The GNU General Public License is a free, copyleft license for software and other kinds of works.
+DICOM Translator is released under the [GNU General Public License 3](https://www.gnu.org/licenses/gpl-3.0.html), a free, copyleft license for software and other kinds of works.
 
-### Git hocks
-Install "pre-commit"
+## Contributing
+
+Contributions to the DICOM Translator are welcome! If you have suggestions for improvements or encounter any issues, please feel free to open an issue or submit a pull request.
+
+### Pre-commit Hooks
+
+To ensure code quality and consistency, install pre-commit hooks:
+
 ```bash
 pip install pre-commit
-```
-
-then run:
-```bash
 pre-commit install
 ```
-# Support
 
-If you really like this repository and find it useful, please consider (★) starring it, so that it can reach a broader audience of like-minded people.
+## Support
+
+If you find the DICOM Translator helpful, consider starring the repository on GitHub. This helps increase its visibility and reach more users interested in DICOM file management.
