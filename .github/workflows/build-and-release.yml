@@ -38,7 +38,7 @@ jobs:
         run: mv ./dist/DicomTranslator ./dist/DicomTranslator-linux-${{  steps.get_tag.outputs.TAG }}
 
       - name: Upload Executable to Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: DicomTranslator-linux-${{  steps.get_tag.outputs.TAG }}
           path: ./dist/DicomTranslator-linux-${{  steps.get_tag.outputs.TAG }}
@@ -70,7 +70,7 @@ jobs:
         run: mv ./dist/DicomTranslator ./dist/DicomTranslator-macos-arm-${{ steps.get_tag.outputs.TAG }}
 
       - name: Upload ARM Executable to Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: DicomTranslator-macos-arm-${{ steps.get_tag.outputs.TAG }}
           path: ./dist/DicomTranslator-macos-arm-${{ steps.get_tag.outputs.TAG }}
@@ -107,7 +107,7 @@ jobs:
         run: mv ./dist/DicomTranslator.exe ./dist/DicomTranslator-windows-${{  steps.get_tag.outputs.TAG }}.exe
 
       - name: Upload Executable to Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: DicomTranslator-windows-${{  steps.get_tag.outputs.TAG }}
           path: ./dist/DicomTranslator-windows-${{  steps.get_tag.outputs.TAG }}.exe
@@ -122,7 +122,7 @@ jobs:
           ISCC.exe /DMyAppVersion=${{ steps.get_tag.outputs.TAG }} /F"DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}" .\DicomTranslator.iss
 
       - name: Upload Installer to Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: DicomTranslatorSetup-windows-${{ steps.get_tag.outputs.TAG }}
           path: ./Output/DicomTranslatorSetup-${{ steps.get_tag.outputs.TAG }}.exe
@@ -158,7 +158,7 @@ jobs:
         run: mv ./dist/DicomTranslator ./dist/DicomTranslator-macos-${{  steps.get_tag.outputs.TAG }}
 
       - name: Upload Executable to Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: DicomTranslator-macos-${{  steps.get_tag.outputs.TAG }}
           path: ./dist/DicomTranslator-macos-${{  steps.get_tag.outputs.TAG }}
@@ -169,7 +169,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: List downloaded files
         run: |
