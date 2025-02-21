@@ -6,6 +6,10 @@ DICOM Translator is a Python-based tool designed to efficiently move or copy DIC
 
 **Example**: A file named `IM-0001-0001.dcm` could be renamed to `John_Doe/20221008_1019/CT_Scan/CT_Scan_dym_00001.dcm` if the patient's name is "John Doe", the exam date is October 8, 2022, at 10:19 AM, and the sequence name is "CT_Scan".
 
+## Change Logs
+**1.4.0**
+- Zip support added now it is possible to write the data directly into a ZIP file
+  
 ## Requirements
 
 - **Python:** Version 3.10 or newer
